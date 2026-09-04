@@ -4,7 +4,7 @@ import Input from './Input'
 import {
   subscribeToNotifications,
   unsubscribeFromNotifications,
-} from '../services/api'
+} from '../services/notificationsService'
 
 export default function NotificationSubscriptions() {
   const [email, setEmail] = useState('')
