@@ -10,8 +10,6 @@ export default function OrdersList({ refreshKey }) {
   const [orders, setOrders] = useState([])
   const [error, setError] = useState('')
   const [isLoading, setIsLoading] = useState(true)
-  const [deletingOrderId, setDeletingOrderId] = useState(null)
-  const [updatingOrderId, setUpdatingOrderId] = useState(null)
 
   useEffect(() => {
     let isMounted = true
@@ -44,7 +42,6 @@ export default function OrdersList({ refreshKey }) {
   }, [refreshKey])
 
   async function handleDelete(orderId) {
-    setDeletingOrderId(orderId)
     setError('')
 
     try {
@@ -54,13 +51,10 @@ export default function OrdersList({ refreshKey }) {
       )
     } catch (requestError) {
       setError(requestError.message || 'Unable to delete the order.')
-    } finally {
-      setDeletingOrderId(null)
     }
   }
 
   async function handleUpdate(orderId, orderData) {
-    setUpdatingOrderId(orderId)
     setError('')
 
     try {
@@ -74,8 +68,6 @@ export default function OrdersList({ refreshKey }) {
     } catch (requestError) {
       setError(requestError.message || 'Unable to update the order.')
       return false
-    } finally {
-      setUpdatingOrderId(null)
     }
 
     return true
@@ -112,7 +104,6 @@ export default function OrdersList({ refreshKey }) {
                 order={order}
                 onDelete={handleDelete}
                 onUpdate={handleUpdate}
-                isDeleting={deletingOrderId === orderId || updatingOrderId === orderId}
               />
             )
           })}

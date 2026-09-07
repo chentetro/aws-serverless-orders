@@ -19,8 +19,9 @@ function getKeyPhrases(keyPhrases) {
   return keyPhrases
 }
 
-export default function OrderItem({ order, onDelete, onUpdate, isDeleting }) {
+export default function OrderItem({ order, onDelete, onUpdate }) {
   const [isEditing, setIsEditing] = useState(false)
+  const [isPending, setIsPending] = useState(false)
   const [description, setDescription] = useState(order.description ?? '')
   const [price, setPrice] = useState(String(order.price ?? ''))
   const [error, setError] = useState('')
@@ -37,12 +38,28 @@ export default function OrderItem({ order, onDelete, onUpdate, isDeleting }) {
     }
 
     setError('')
-    const didUpdate = await onUpdate(orderId, {
-      description: description.trim(),
-      price: numericPrice,
-    })
-    if (didUpdate) {
-      setIsEditing(false)
+    setIsPending(true)
+
+    try {
+      const didUpdate = await onUpdate(orderId, {
+        description: description.trim(),
+        price: numericPrice,
+      })
+      if (didUpdate) {
+        setIsEditing(false)
+      }
+    } finally {
+      setIsPending(false)
+    }
+  }
+
+  async function handleDelete() {
+    setIsPending(true)
+
+    try {
+      await onDelete(orderId)
+    } finally {
+      setIsPending(false)
     }
   }
 
@@ -62,6 +79,7 @@ export default function OrderItem({ order, onDelete, onUpdate, isDeleting }) {
             label="Description"
             value={description}
             onChange={(event) => setDescription(event.target.value)}
+            disabled={isPending}
             error={error}
           />
           <Input
@@ -72,10 +90,13 @@ export default function OrderItem({ order, onDelete, onUpdate, isDeleting }) {
             step="0.01"
             value={price}
             onChange={(event) => setPrice(event.target.value)}
+            disabled={isPending}
           />
           <div className="flex gap-2">
-            <Button type="submit">Save</Button>
-            <Button type="button" variant="secondary" onClick={handleCancel}>
+            <Button type="submit" disabled={isPending}>
+              {isPending ? 'Saving...' : 'Save'}
+            </Button>
+            <Button type="button" variant="secondary" onClick={handleCancel} disabled={isPending}>
               Cancel
             </Button>
           </div>
@@ -104,11 +125,11 @@ export default function OrderItem({ order, onDelete, onUpdate, isDeleting }) {
             )}
           </div>
           <div className="flex shrink-0 gap-2">
-            <Button type="button" variant="secondary" onClick={() => setIsEditing(true)} disabled={isDeleting}>
+            <Button type="button" variant="secondary" onClick={() => setIsEditing(true)} disabled={isPending}>
               Edit
             </Button>
-            <Button type="button" variant="secondary" onClick={() => onDelete(orderId)} disabled={isDeleting}>
-              {isDeleting ? 'Deleting...' : 'Delete'}
+            <Button type="button" variant="secondary" onClick={handleDelete} disabled={isPending}>
+              {isPending ? 'Deleting...' : 'Delete'}
             </Button>
           </div>
         </div>
