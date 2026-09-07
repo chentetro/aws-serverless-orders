@@ -1,7 +1,11 @@
+import { useState } from 'react'
 import NotificationSubscriptions from './components/NotificationSubscriptions'
 import CreateOrder from './components/CreateOrder'
+import OrdersList from './components/OrdersList'
 
 function App() {
+  const [ordersVersion, setOrdersVersion] = useState(0)
+
   return (
     <main className="min-h-screen bg-slate-100 px-4 py-10 text-slate-900 sm:px-8 sm:py-16">
       <div className="mx-auto max-w-5xl">
@@ -10,8 +14,9 @@ function App() {
         <div className="mt-8 border-t border-slate-300 pt-6">
           <div className="grid gap-4 lg:grid-cols-2">
             <NotificationSubscriptions />
-            <CreateOrder />
+            <CreateOrder onOrderCreated={() => setOrdersVersion((version) => version + 1)} />
           </div>
+          <OrdersList refreshKey={ordersVersion} />
         </div>
       </div>
     </main>
