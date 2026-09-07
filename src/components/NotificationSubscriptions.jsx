@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import Button from './Button'
 import Input from './Input'
-import { subscribeEmail, unsubscribeEmail } from '../services/notificationsService'
+import { subscribeEmail, unsubscribeEmail } from '../services/ordersService'
 
 export default function NotificationSubscriptions() {
   const [email, setEmail] = useState('')

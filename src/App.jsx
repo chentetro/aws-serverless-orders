@@ -2,6 +2,7 @@ import { useState } from 'react'
 import NotificationSubscriptions from './components/NotificationSubscriptions'
 import CreateOrder from './components/CreateOrder'
 import OrdersList from './components/OrdersList'
+import DeletedOrdersReport from './components/DeletedOrdersReport'
 
 function App() {
   const [ordersVersion, setOrdersVersion] = useState(0)
@@ -17,6 +18,7 @@ function App() {
             <CreateOrder onOrderCreated={() => setOrdersVersion((version) => version + 1)} />
           </div>
           <OrdersList refreshKey={ordersVersion} />
+          <DeletedOrdersReport />
         </div>
       </div>
     </main>
