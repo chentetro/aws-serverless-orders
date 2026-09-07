@@ -23,6 +23,7 @@ export default function DeletedOrdersReport() {
   const [report, setReport] = useState(null)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
+  const reportOrders = Array.isArray(report?.orders) ? report.orders : []
 
   async function handleToggle() {
     if (isOpen) {
@@ -78,7 +79,7 @@ export default function DeletedOrdersReport() {
                 </div>
               </div>
 
-              {report.orders.length === 0 ? (
+              {reportOrders.length === 0 ? (
                 <p className="mt-5 text-sm text-slate-500">No deleted orders found.</p>
               ) : (
                 <div className="mt-5 overflow-x-auto">
@@ -92,7 +93,7 @@ export default function DeletedOrdersReport() {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100">
-                      {report.orders.map((order) => (
+                      {reportOrders.map((order) => (
                         <tr key={`${order.orderId}-${order.deletedAt}`}>
                           <td className="whitespace-nowrap px-3 py-3 font-medium text-slate-900">{order.orderId}</td>
                           <td className="px-3 py-3 text-slate-600">{order.description}</td>

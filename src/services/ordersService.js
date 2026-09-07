@@ -20,8 +20,23 @@ export function deleteOrder(orderId) {
   return apiRequest(`/orders/${orderId}`, 'DELETE')
 }
 
-export function getDeletedOrdersReport() {
-  return apiRequest('/reports/deleted-orders')
+function parseReportNumber(value) {
+  const parsedValue = Number(value)
+  return Number.isFinite(parsedValue) ? parsedValue : 0
+}
+
+export async function getDeletedOrdersReport() {
+  const response = await apiRequest('/reports/deleted-orders')
+
+  if (response === null || typeof response !== 'object' || Array.isArray(response)) {
+    throw new Error('The deleted orders report returned an invalid response.')
+  }
+
+  return {
+    totalDeletedOrders: parseReportNumber(response.totalDeletedOrders),
+    totalLostRevenue: parseReportNumber(response.totalLostRevenue),
+    orders: Array.isArray(response.orders) ? response.orders : [],
+  }
 }
 
 export function subscribeEmail(email) {
