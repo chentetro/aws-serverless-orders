@@ -1,16 +1,14 @@
 import { useState } from 'react'
 import Button from './Button'
 import Input from './Input'
-import {
-  subscribeToNotifications,
-  unsubscribeFromNotifications,
-} from '../services/notificationsService'
+import { subscribeEmail, unsubscribeEmail } from '../services/notificationsService'
 
 export default function NotificationSubscriptions() {
   const [email, setEmail] = useState('')
   const [error, setError] = useState('')
   const [status, setStatus] = useState('')
-  const [actionLoading, setActionLoading] = useState(null)
+  const [isSubscribing, setIsSubscribing] = useState(false)
+  const [isUnsubscribing, setIsUnsubscribing] = useState(false)
 
   function validateEmail() {
     if (!email.trim()) {
@@ -35,19 +33,15 @@ export default function NotificationSubscriptions() {
     }
 
     const normalizedEmail = email.trim()
-    setActionLoading('subscribe')
+    setIsSubscribing(true)
 
     try {
-      const response = await subscribeToNotifications(normalizedEmail)
-      setStatus(
-        typeof response === 'object' && response?.message
-          ? response.message
-          : `Notifications enabled for ${normalizedEmail}.`,
-      )
+      await subscribeEmail(normalizedEmail)
+      setStatus('Confirmation email sent - please check your inbox to confirm.')
     } catch (requestError) {
       setError(requestError.message || 'Unable to subscribe to notifications.')
     } finally {
-      setActionLoading(null)
+      setIsSubscribing(false)
     }
   }
 
@@ -61,19 +55,15 @@ export default function NotificationSubscriptions() {
     }
 
     const normalizedEmail = email.trim()
-    setActionLoading('unsubscribe')
+    setIsUnsubscribing(true)
 
     try {
-      const response = await unsubscribeFromNotifications(normalizedEmail)
-      setStatus(
-        typeof response === 'object' && response?.message
-          ? response.message
-          : `Notifications disabled for ${normalizedEmail}.`,
-      )
+      await unsubscribeEmail(normalizedEmail)
+      setStatus('Successfully unsubscribed.')
     } catch (requestError) {
       setError(requestError.message || 'Unable to unsubscribe from notifications.')
     } finally {
-      setActionLoading(null)
+      setIsUnsubscribing(false)
     }
   }
 
@@ -82,6 +72,8 @@ export default function NotificationSubscriptions() {
     setError('')
     setStatus('')
   }
+
+  const isBusy = isSubscribing || isUnsubscribing
 
   return (
     <section className="w-full max-w-xl rounded-lg border border-slate-200 bg-white p-6 shadow-sm sm:p-7">
@@ -111,22 +103,23 @@ export default function NotificationSubscriptions() {
           onChange={handleEmailChange}
           placeholder="user@example.com"
           autoComplete="email"
+          disabled={isBusy}
           error={error}
         />
 
         <div className="mt-4 flex flex-wrap gap-2">
-          <Button type="submit" disabled={actionLoading !== null}>
+          <Button type="submit" disabled={isBusy}>
             <span aria-hidden="true">+</span>
-            {actionLoading === 'subscribe' ? 'Subscribing...' : 'Subscribe'}
+            {isSubscribing ? 'Subscribing...' : 'Subscribe'}
           </Button>
           <Button
             type="button"
             variant="secondary"
             onClick={handleUnsubscribe}
-            disabled={actionLoading !== null}
+            disabled={isBusy}
           >
             <span aria-hidden="true">-</span>
-            {actionLoading === 'unsubscribe' ? 'Unsubscribing...' : 'Unsubscribe'}
+            {isUnsubscribing ? 'Unsubscribing...' : 'Unsubscribe'}
           </Button>
         </div>
       </form>
