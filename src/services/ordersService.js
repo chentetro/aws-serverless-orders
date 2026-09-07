@@ -19,3 +19,15 @@ export function updateOrder(orderId, orderData) {
 export function deleteOrder(orderId) {
   return apiRequest(`/orders/${orderId}`, 'DELETE')
 }
+
+export function getDeletedOrdersReport() {
+  return apiRequest('/reports/deleted-orders')
+}
+
+export function subscribeEmail(email) {
+  return apiRequest('/subscriptions/subscribe', 'POST', { email })
+}
+
+export function unsubscribeEmail(email) {
+  return apiRequest('/subscriptions/unsubscribe', 'POST', { email })
+}
