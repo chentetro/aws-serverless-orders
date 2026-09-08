@@ -8,6 +8,10 @@ export function createOrder(orderData) {
   return apiRequest('/orders', 'POST', orderData)
 }
 
+export function extractOrderFromDocument({ imageBase64, fileName }) {
+  return apiRequest('/orders/extract', 'POST', { imageBase64, fileName })
+}
+
 export function getOrder(orderId) {
   return apiRequest(`/orders/${orderId}`)
 }
