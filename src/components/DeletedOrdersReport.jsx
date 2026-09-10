@@ -79,8 +79,21 @@ export default function DeletedOrdersReport() {
                 </div>
               </div>
 
+              {report.pdfUrl && (
+                <a
+                  className="mt-4 inline-flex items-center justify-center gap-2 rounded-md bg-orange-500 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-orange-600 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-orange-200"
+                  href={report.pdfUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  Download PDF
+                </a>
+              )}
+
               {reportOrders.length === 0 ? (
-                <p className="mt-5 text-sm text-slate-500">No deleted orders found.</p>
+                !report.pdfUrl && (
+                  <p className="mt-5 text-sm text-slate-500">No deleted orders found.</p>
+                )
               ) : (
                 <div className="mt-5 overflow-x-auto">
                   <table className="w-full min-w-[42rem] text-left text-sm">
