@@ -80,3 +80,6 @@ def lambda_handler(event, context):
             },
             'body': json.dumps({'error': f"Failed to generate report: {str(e)}"})
         }
+5a3ce70bb17a99401fa4e2f7ffb2303ead13b2b2
+
+main

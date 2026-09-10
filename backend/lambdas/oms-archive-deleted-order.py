@@ -5,6 +5,9 @@ from datetime import datetime
 
 s3 = boto3.client('s3')
 BUCKET_NAME = os.environ.get('ARCHIVE_BUCKET_NAME', '').strip()
+5a3ce70bb17a99401fa4e2f7ffb2303ead13b2b2
+
+main
 
 def lambda_handler(event, context):
     records = event.get('Records', [])
@@ -13,6 +16,9 @@ def lambda_handler(event, context):
     for record in records:
         event_name = record.get('eventName')  # 'INSERT', 'MODIFY', 'REMOVE'
         
+5a3ce70bb17a99401fa4e2f7ffb2303ead13b2b2
+
+main
         # Archive only on item deletion
         if event_name == 'REMOVE':
             dynamodb_data = record.get('dynamodb', {})
@@ -22,6 +28,9 @@ def lambda_handler(event, context):
                 print("Skipping record: OldImage is missing.")
                 continue
             
+5a3ce70bb17a99401fa4e2f7ffb2303ead13b2b2
+
+main
             # Extract fields according to your schema
             order_id = old_image.get('orderId', {}).get('S', 'unknown_id')
             description = old_image.get('description', {}).get('S', 'No description')
@@ -41,12 +50,19 @@ def lambda_handler(event, context):
             
             s3_key = f"deleted-orders/{order_id}.json"
             
+5a3ce70bb17a99401fa4e2f7ffb2303ead13b2b2
+
+main
             try:
                 s3.put_object(
                     Bucket=BUCKET_NAME,
                     Key=s3_key,
                     Body=json.dumps(archive_payload, indent=2),
                     ContentType='application/json'
+
+                    Body=json.dumps(archive_payload, indent=2),
+                    ContentType='application/json'
+main
                 )
                 print(f"Successfully archived deleted order {order_id} to s3://{BUCKET_NAME}/{s3_key}")
             except Exception as e:
@@ -57,3 +73,7 @@ def lambda_handler(event, context):
         'statusCode': 200,
         'body': json.dumps({'message': 'S3 archiving processed successfully'})
     }
+
+        'body': json.dumps({'message': 'S3 archiving processed successfully'})
+    }
+main

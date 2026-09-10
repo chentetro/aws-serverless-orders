@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import Button from './Button'
 import Input from './Input'
+import { getOrder } from '../services/ordersService'
 
 function formatCreatedAt(createdAt) {
   if (!createdAt) {
@@ -25,8 +26,28 @@ export default function OrderItem({ order, onDelete, onUpdate }) {
   const [description, setDescription] = useState(order.description ?? '')
   const [price, setPrice] = useState(String(order.price ?? ''))
   const [error, setError] = useState('')
+  const [details, setDetails] = useState(null)
+  const [isLoadingDetails, setIsLoadingDetails] = useState(false)
   const orderId = order.orderId ?? order.id
   const keyPhrases = getKeyPhrases(order.keyPhrases)
+
+  async function handleViewDetails() {
+    if (details) {
+      setDetails(null)
+      return
+    }
+
+    setError('')
+    setIsLoadingDetails(true)
+
+    try {
+      setDetails(await getOrder(orderId))
+    } catch (requestError) {
+      setError(requestError.message || 'Unable to load this order.')
+    } finally {
+      setIsLoadingDetails(false)
+    }
+  }
 
   async function handleUpdate(event) {
     event.preventDefault()
@@ -123,8 +144,26 @@ export default function OrderItem({ order, onDelete, onUpdate }) {
                 )}
               </dl>
             )}
+            {error && (
+              <p className="mt-2 rounded-md bg-red-50 px-3 py-2 text-xs font-medium text-red-700" role="alert">
+                {error}
+              </p>
+            )}
+            {details && (
+              <pre className="mt-3 overflow-x-auto rounded-md bg-slate-50 px-3 py-2 text-[11px] text-slate-700">
+                {JSON.stringify(details, null, 2)}
+              </pre>
+            )}
           </div>
           <div className="flex shrink-0 gap-2">
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={handleViewDetails}
+              disabled={isPending || isLoadingDetails}
+            >
+              {isLoadingDetails ? 'Loading...' : details ? 'Hide details' : 'View details'}
+            </Button>
             <Button type="button" variant="secondary" onClick={() => setIsEditing(true)} disabled={isPending}>
               Edit
             </Button>

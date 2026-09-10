@@ -40,6 +40,7 @@ export async function getDeletedOrdersReport() {
     totalDeletedOrders: parseReportNumber(response.totalDeletedOrders),
     totalLostRevenue: parseReportNumber(response.totalLostRevenue),
     orders: Array.isArray(response.orders) ? response.orders : [],
+    pdfUrl: response.url ?? response.pdfUrl ?? response.downloadUrl ?? null,
   }
 }
 
